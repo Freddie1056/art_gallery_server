@@ -37,7 +37,7 @@ The API utilizes Flask for routing, SQLAlchemy for database interaction, and bcr
 
 ## 🗂 Project Structure
 
-    ``plaintext
+``plaintext
 .
 ├── app.py                  # Main Flask application
 ├── database.db             # SQLite database (auto-generated)
