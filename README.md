@@ -39,7 +39,7 @@ cd <repository_name>
 
 **On Linux/macOS:**
 
-```bash
+``bash
 python -m venv venv
 source venv/bin/activate
 
@@ -75,7 +75,7 @@ Now you can access the API endpoints at `http://localhost:5000`.
 - **Endpoint:** `/register`
 - **Method:** `POST`
 - **Request Body:**
-  ```json
+  ``json
   {
     "name": "John Doe",
     "email": "john.doe@example.com",
