@@ -1,186 +1,131 @@
-# Art Gallery Server
+# Artworks & Reviews API
 
-This is a Flask-based API for an Art Marketplace. The platform allows users to register, log in, and upload artworks. Users can also post reviews for artworks. The app supports functionality for both artists and regular users, offering routes to create, retrieve, update, and delete users, artworks, and reviews.
+## Overview
 
-## Features
+This project is a Flask-based API for managing a simple art gallery system, allowing users to:
 
-- **User Registration and Authentication**:
-  - Users can register with their name, email, and password.
-  - Passwords are securely hashed using `bcrypt`.
-  - Users can log in with valid credentials.
-  - Artists are distinguished from regular users by a boolean flag.
-  
-- **Artwork Management**:
-  - Artists can create and manage their artworks.
-  - Artworks have fields like title, description, and price, and are linked to their respective artists.
-  
-- **Review System**:
-  - Users can write reviews and rate artworks.
-  - Reviews are linked to both users and artworks.
+- Register as artists or reviewers
+- Upload artworks for sale
+- Leave reviews and ratings on various artworks
 
-## Technologies
+The API utilizes Flask for routing, SQLAlchemy for database interaction, and bcrypt for securely hashing passwords.
 
-- **Flask**: Web framework.
-- **SQLite**: Database system used for data storage.
-- **SQLAlchemy**: ORM used to interact with the database.
-- **bcrypt**: For password hashing.
-- **Flask-Session**: For managing user sessions.
+## 📋 Table of Contents
 
-## Installation
+- [Technologies](#technologies)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Running the App](#running-the-app)
+- [API Endpoints](#api-endpoints)
+  - [User Registration](#user-registration)
+  - [Login](#login)
+  - [Artworks](#artworks)
+  - [Reviews](#reviews)
+- [Database Models](#database-models)
+- [Example curl Requests](#example-curl-requests)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
 
-To run the project locally, follow these steps:
+## 🛠 Technologies
 
-### 1. Clone the Repository
-  ``bash
-git clone <repository_url>
-cd <repository_name>
+- **Python**: Core programming language
+- **Flask**: Web framework for routing and handling HTTP requests
+- **Flask-SQLAlchemy**: ORM for database interaction
+- **SQLite**: Lightweight database for storing users, artworks, and reviews
+- **bcrypt**: For securely hashing passwords
+- **SQLAlchemy Serializer**: For converting SQLAlchemy models to JSON
 
-### 2. Set Up a Virtual Environment
+## 🗂 Project Structure
 
-**On Linux/macOS:**
+``plaintext
+.
+├── app.py                  # Main Flask application
+├── database.db             # SQLite database (auto-generated)
+├── models.py               # SQLAlchemy models for User, Artwork, and Review
+├── requirements.txt        # Project dependencies
+└── README.md               # Project documentation
 
-``bash
-python -m venv venv
-source venv/bin/activate
+## ⚙️ Installation
 
+   ### 1. Clone the repository:
+git clone https://github.com/your-repo/flask-artwork-reviews-api.git
+cd flask-artwork-reviews-api
 
-**On Windows:**
+   ### 2. virtual environment:
+   python -m venv venv
+   source venv/bin/activate
 
-1. Open PowerShell as an administrator.
-2. Run the following command to create a virtual environment: `python -m venv venv`
+   ### 3. Install dependencies:
+   pip install -r requirements.txt
 
-3. Activate the virtual environment:
-   - **On Linux/macOS:** `source venv/bin/activate`
-   - **On Windows:** `venv\Scripts\activate.bat`
+   ### 4. database setup:
+   flask shell
+   from app import db
+   db.create_all()
+   exit()
 
-4. Install required packages: `pip install -r requirements.txt`
+   ### 5. Create a `.env` file:
+   touch.env
 
-### 3. Create a Database
+   ### 6. Configure environment variables:
+   Add the following environment variables to the `.env` file:
 
-Create a SQLite database named `art_gallery.db` in the project root directory.
+   ### 4. Configure environment variables:
+   Create a `.env` file in the root directory and add the following environment variables:
+   
+   ### 5. Run the app:
+   flask run
+   Server will start at http://localhost:5000
 
-### 4. Run the Server
-
-Run the following command to start the Flask server:
-
-1. **On Linux/macOS:** `flask run`
-2. **On Windows:** `python -m flask run`
-
-Now you can access the API endpoints at `http://localhost:5000`.
-
-## API Documentation
-
+## 📚 API Endpoints
 ### User Registration
 
-- **Endpoint:** `/register`
-- **Method:** `POST`
-- **Request Body:**
-  ``json
-  {
-    "name": "John Doe",
-    "email": "john.doe@example.com",
-    "password": "password123"
-  }
-  Response:
+- **URL**: `/api/register`
+- **Method**: POST
+- **Request Body**: JSON object with `username`, `email`, and `password` fields
+- **Response Body**: JSON object with `message` field indicating success or failure 
+### Login
 
-json
+- **URL**: `/api/login`
+- **Method**: POST
+- **Request Body**: JSON object with `email` and `password` fields
+- **Response Body**: JSON object with `access_token` field containing a JWT token if login is successful
+### Artworks
 
-{
-  "message": "User registered successfully"
-}
+- **URL**: `/api/artworks`
+- **Method**: GET
+- **Response Body**: JSON array of artworks, each with `id`, `title`, `description`, `price`, `created_at`, and `author_id` fields
+- **URL**: `/api/artworks/<id>`
+- **Method**: GET
+- **Response Body**: JSON object with the artwork details, including `id`, `title`, `description`, `price`, `created_at`, and `author_id` fields
+### Reviews
 
-2. ***Login (POST /login)
+- **URL**: `/api/artworks/<id>/reviews`
+- **Method**: POST
+- **Request Body**: JSON object with `rating` and `comment` fields
+- **Response Body**: JSON object with `message` field indicating success or failure
+- **URL**: `/api/artworks/<id>/reviews/<review_id>`
+- **Method**: GET
+- **Response Body**: JSON object with the review details, including `id`, `rating`, `comment`, `created_at`, and `author_id` fields
+- **URL**: `/api/artworks/<id>/reviews/<review_id>`
+- **Method**: PUT
+- **Request Body**: JSON object with `rating` and/or `comment` fields
+- **Response Body**: JSON object with `message` field indicating success or failure
+- **URL**: `/api/artworks/<id>/reviews/<review_id>`
+- **Method**: DELETE
+- **Response Body**: JSON object with `message` field indicating success or failure
 
-Request Body:
+## Database Models
 
-json
+- `User` model: `id`, `username`, `email`, `password_hash`
+- `Artwork` model: `id`, `title`, `description`, `price`, `created_at`, `author_id` (foreign key referencing `User.id`)
+- `Review` model: `id`, `rating`, `comment`, `created_at`, `author_id` (foreign key referencing `User.id`), `artwork_id`
+## Example curl Requests
+### User Registration
+## Troubleshooting
+- If you encounter a `401 Unauthorized` error, make sure you are sending the correct `Authorization` header in your request. The header should contain the value `Bearer <access_token>`.
+## License
 
-{
-  "email": "john@example.com",
-  "password": "securepassword"
-}
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
-Response:
-
-json
-
-{
-  "message": "Login successful",
-  "user": {
-    "id": 1,
-    "name": "John Doe",
-    "email": "john@example.com",
-    "is_artist": true
-}
-
-
-3. ***Get All Users (GET /users)
-
-Response:
-
-json
-
-[
-  {
-    "id": 1,
-    "name": "John Doe",
-    "email": "john@example.com",
-    "is_artist": true
-  }
-]
-
-Artworks
-1. ***Create a New Artwork (POST /artworks)
-
-Request Body:
-
-json
-
-{
-  "title": "Sunset",
-  "description": "A beautiful sunset painting",
-  "price": 500,
-  "artist_id": 1
-}
-
-Response:
-
-json
-
-{
-  "message": "Artwork created successfully"
-}
-
-2. ***Get All Artworks (GET /artworks)
-
-Response:
-
-json
-
-[
-  {
-    "id": 1,
-    "title": "Sunset",
-    "description": "A beautiful sunset painting",
-    "price": 500,
-    "artist_id": 1
-  }
-]
-
-3. ***Get Artwork by ID (GET /artworks/<id>)
-
-Response:
-
-json
-
-{
-  "id": 1,
-  "title": "Sunset",
-  "description": "A beautiful sunset painting",
-  "price": 500,
-  "artist_id": 1
-}
-
-##License
-
-This project is licensed under the MIT License.
+---
