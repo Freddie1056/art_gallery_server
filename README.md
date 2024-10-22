@@ -31,7 +31,7 @@ This is a Flask-based API for an Art Marketplace. The platform allows users to r
 To run the project locally, follow these steps:
 
 ### 1. Clone the Repository
-  ```bash
+  ``bash
 git clone <repository_url>
 cd <repository_name>
 
